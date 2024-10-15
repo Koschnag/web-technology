@@ -1,0 +1,75 @@
+/* Globale Stile */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; /* Helle Hintergrundfarbe */
+    color: #333333; /* Dunkle Schriftfarbe */
+}
+
+/* Header-Stile */
+header {
+    background-color: #222222; /* Dunkler Hintergrund */
+    color: white; /* Weiße Schrift */
+    padding: 20px;
+    text-align: center; /* Textzentrierung */
+}
+
+/* Artikel-Stile */
+article {
+    max-width: 800px; /* Maximale Breite für den Inhalt */
+    margin: 20px auto; /* Zentrales Layout */
+    padding: 20px;
+    background-color: white; /* Weißer Hintergrund für den Artikel */
+    border: 1px solid #888888; /* Rahmen um den Artikel */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Schatten für den Artikel */
+}
+
+/* Angebot-Stile */
+.angebot {
+    border: 1px solid #3d3d3d; /* Dunkler Rahmen */
+    padding: 10px;
+    margin: 20px 0; /* Abstand nach oben und unten */
+}
+
+/* Tabellen-Stile */
+table {
+    width: 100%; /* Volle Breite für die Tabelle */
+    border-collapse: collapse; /* Tabellenränder zusammenführen */
+    margin: 20px 0; /* Abstand zu anderen Elementen */
+}
+
+th, td {
+    border: 1px solid #888888; /* Rahmen für die Zellen */
+    padding: 8px; /* Innenabstand */
+    text-align: left; /* Linksbündige Ausrichtung */
+}
+
+th {
+    background-color: #f2f2f2; /* Helle Hintergrundfarbe für die Kopfzeilen */
+}
+
+/* Footer-Stile */
+footer {
+    background-color: #222222; /* Dunkler Hintergrund */
+    color: white; /* Weiße Schrift */
+    padding: 10px;
+    text-align: center; /* Textzentrierung */
+    position: relative; /* Relativ zur Seite */
+    bottom: 0; /* Unten fixieren */
+    width: 100%; /* Volle Breite */
+}
+
+/* Bild-Stile */
+img {
+    max-width: 100%; /* Bild passt sich der Breite des Containers an */
+    height: auto; /* Höhe wird proportional zur Breite angepasst */
+    display: block; /* Block-Element, um Abstand zu vermeiden */
+    margin: 20px auto; /* Zentrierung und Abstand */
+}
+
+.logo {
+    max-width: 200px; /* Maximale Breite für das Logo */
+    margin: 0 auto; /* Zentrierte Ausrichtung */
+    display: block; /* Block-Element */
+}
