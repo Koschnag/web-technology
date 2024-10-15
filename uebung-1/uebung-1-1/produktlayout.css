@@ -11,3 +11,19 @@ h2 {
 .not-available {
     color: red;
 }
+
+/* Media Queries für verschiedene Bildschirmbreiten */
+@media (max-width: 480px) {
+    p {
+        font-size: 150%; /* Schriftgröße um 50% erhöhen */
+        width: 280px; /* Breite auf 280px setzen */
+        background-color: #e0e0e0; /* Hintergrundfarbe für bessere Sichtbarkeit */
+    }
+}
+
+@media (min-width: 481px) {
+    p {
+        width: 800px; /* Breite auf 800px setzen */
+        background-color: #e0e0e0; /* Hintergrundfarbe für bessere Sichtbarkeit */
+    }
+}
