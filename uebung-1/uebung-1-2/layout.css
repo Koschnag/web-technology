@@ -1,0 +1,122 @@
+/* Logo */
+#logo {
+    background-color: #222222; /* Dunkler Hintergrund für den Banner */
+    color: white; /* Weißer Text */
+    font-size: 26px;
+    text-align: left; /* Text links ausgerichtet */
+    padding: 13px; /* Abstand zum Rand des Banners */
+    width: 100%; /* Banner nimmt die volle Breite ein */
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite gezählt */
+    font-family: Arial, sans-serif;
+}
+
+/* Navigation (Navbar) */
+#menu {
+    background-color: #d3d3d3; /* Hellgrauer Hintergrund */
+    color: white; /* Weiße Schrift */
+    padding: 10px; /* Abstand um die Links herum */
+    font-size: 18px; /* Schriftgröße */
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+#menu a {
+    color: white; /* Links auch in Weiß */
+    text-decoration: none; /* Keine Unterstreichung standardmäßig */
+    margin-right: 15px; /* Abstand zwischen den Links */
+    font-size: inherit; /* Schriftgröße erbt vom Eltern-Element (Navbar) */
+}
+
+#menu a:hover {
+    text-decoration: underline; /* Unterstreichung beim Hovern */
+}
+
+/* Überschrift 1 (h1) */
+.ueberschrift1 {
+    font-size: 26px;
+    color: #222222;
+}
+
+/* Überschrift 2 (h2) */
+.ueberschrift2 {
+    font-size: 18px;
+    width: 650px;
+    line-height: 1.5; /* 1,5-facher Zeilenabstand */
+    margin-bottom: 20px; /* Abstand nach unten */
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite gezählt */
+}
+
+/* Teasertext - Erster Block */
+.teasertext {
+    font-size: 18px;
+    width: 650px;
+    line-height: 1.5; /* 1,5-facher Zeilenabstand */
+    margin-bottom: 20px; /* Abstand nach unten */
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite gezählt */
+}
+
+/* Artikeltext - Zweiter Block */
+.artikeltext {
+    font-size: 16px;
+    width: 650px;
+    text-align: justify; /* Blocksatz */
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite gezählt */
+}
+
+/* Kommentarblock */
+#kommentar {
+    width: 650px; /* Breite des Kommentarblocks */
+    background-color: #F9F9F9; /* Hintergrundfarbe */
+    border: 1px solid #888888; /* Rahmenfarbe */
+    padding: 15px; /* Innenabstand zum Inhalt */
+    margin-top: 10px; /* Abstand nach oben */
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite gezählt */
+}
+
+#kommentar h1 {
+    font-size: 18px; /* Größere Überschrift für "Kommentare" */
+    color: #222222; /* Dunkle Schriftfarbe */
+    margin-bottom: 10px; /* Abstand nach unten */
+}
+
+/* Verwandte Artikel Box */
+#verwandtbox {
+    width: 650px; /* Breite der Box */
+    border-top: 1px solid #888888; /* Rahmen nur oben */
+    border-bottom: 1px solid #888888; /* Rahmen nur unten */
+    border-left: none; /* Keine Rahmenlinie links */
+    border-right: none; /* Keine Rahmenlinie rechts */
+    padding: 15px; /* Innenabstand */
+    margin-top: 10px; /* Abstand nach oben */
+    font-family: Arial, sans-serif; /* Einheitliche Schriftart */
+    box-sizing: border-box; /* Padding wird zur Gesamtbreite gezählt */
+}
+
+/* Verwandte Artikel Überschrift */
+#verwandtbox h1 {
+    font-size: 18px; /* Größere Überschrift für "Verwandte Artikel" */
+    color: #222222; /* Dunkle Schriftfarbe */
+    margin-bottom: 10px; /* Abstand nach unten */
+}
+
+/* Verwandte Artikel Links (h2) */
+#verwandtbox h2 {
+    font-size: 16px; /* Schriftgröße für Artikel-Titel */
+    margin-bottom: 8px; /* Etwas Abstand nach unten */
+}
+
+#verwandtbox h2 a {
+    color: #0066cc; /* Blaue Farbe für Links */
+    text-decoration: none; /* Keine Unterstreichung standardmäßig */
+}
+
+#verwandtbox h2 a:hover {
+    text-decoration: underline; /* Unterstreichung beim Hovern */
+}
+
+/* Verwandte Artikel Text */
+#verwandtbox div {
+    font-size: 16px; /* Standardgröße für Beschreibungstext */
+    line-height: 1.5; /* Zeilenabstand für bessere Lesbarkeit */
+    color: #444444; /* Etwas hellere Farbe für den Text */
+}
