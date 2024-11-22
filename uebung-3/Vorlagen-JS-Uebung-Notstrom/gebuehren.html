@@ -22,7 +22,7 @@
     <h2 class="angebot">Schulung "Notstrom-Sicherheit"</h2>
 
     <p>Teilnahmegebühr: 500 Euro / Person zzgl. MwSt.
-    <button type="button" onclick="berechnePreis();">Preis berechnen</button>
+    <button type="button" onclick="berechnePreis(500);">Preis berechnen</button>
     </p>
 
     <hr>
@@ -32,11 +32,30 @@
     </div>
 
     <script>
-        function berechnePreis() {
-            const preisProPerson = 500;
+        function berechnePreis(preisProPerson) {
             const mwst = 0.19;
             const bruttoPreis = preisProPerson * (1 + mwst);
-            alert("Der Bruttopreis für eine Person beträgt: " + bruttoPreis.toFixed(2) + " Euro inkl. MwSt.");
+            let teilnehmer = prompt("Bitte geben Sie die Anzahl der Teilnehmer ein:");
+            teilnehmer = parseInt(teilnehmer);
+            if (isNaN(teilnehmer) || teilnehmer <= 0) {
+                alert("Ungültige Anzahl von Teilnehmern.");
+                return;
+            }
+
+            let gesamtPreis = 0;
+            for (let i = 1; i <= teilnehmer; i++) {
+                if (i >= 8) {
+                    gesamtPreis += bruttoPreis * 0.4;
+                } else if (i >= 5) {
+                    gesamtPreis += bruttoPreis * 0.5;
+                } else if (i >= 3) {
+                    gesamtPreis += bruttoPreis * 0.7;
+                } else {
+                    gesamtPreis += bruttoPreis;
+                }
+            }
+
+            alert("Der Gesamtpreis beträgt: " + gesamtPreis.toFixed(2) + " Euro");
         }
     </script>
 
