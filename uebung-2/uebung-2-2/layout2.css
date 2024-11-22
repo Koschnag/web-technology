@@ -1,0 +1,105 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #141414;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    margin: 20px;
+    font-size: 2em;
+    color: #fff;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* Movie Card Styling */
+.movie-card {
+    position: relative;
+    background-color: #222;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.movie-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.badge {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: red;
+    padding: 2px 8px;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+
+.rank {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.5em;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 10px;
+    border-radius: 50%;
+}
+
+/* Information Box Styling */
+.info-box {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.info-box h2 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.info-box p {
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+.info-box img {
+    width: 30px;
+    height: auto;
+}
+
+/* Footer */
+footer {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 0.8em;
+}
+
+footer a {
+    color: #999;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
