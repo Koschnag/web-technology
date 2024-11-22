@@ -33,3 +33,15 @@ function toggleImage() {
         produktbild.src = 'img/notstromaggregat.jpg';
     }
 }
+
+function init() {
+    document.getElementById('sonderpreis-link').addEventListener('click', highlightPrice);
+    document.getElementById('toggle-price-button').addEventListener('click', togglePrice);
+    const produktbild = document.getElementById('produktbild');
+    produktbild.addEventListener('click', () => {
+        toggleImage();
+        alert('Klicken Sie erneut auf das Bild, um die Ansicht zu wechseln');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', init);
