@@ -75,6 +75,16 @@
             };
 
             console.log("Rechnungsadresse:", rechnungsadresse);
+
+            let heute = new Date();
+            let inDreiTagen = new Date();
+            inDreiTagen.setDate(heute.getDate() + 3);
+
+            let options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+            let heutigesDatum = heute.toLocaleDateString('de-DE', options);
+            let datumInDreiTagen = inDreiTagen.toLocaleDateString('de-DE', options);
+
+            alert(`Vielen Dank für Ihre Bestellung am heutigen ${heutigesDatum}. Die Buchungsbestätigung erhalten Sie spätestens in drei Tagen, d. h. am ${datumInDreiTagen}.`);
         }
     </script>
 
