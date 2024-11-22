@@ -1,0 +1,103 @@
+	body
+	{
+		font-family:Helvetica;
+	}
+
+	#rahmen
+	{
+		border:solid 1px grey;
+		width:700px;
+		border-radius:5px;
+		padding:10px;
+		text-align:center;
+		margin-left:auto;
+		margin-right:auto;
+	}
+
+	@media only screen and (max-width: 480px) {
+		#rahmen {
+			width:90%;
+		}
+		#produktbild {
+			width:80%;
+		}
+
+	}
+	
+	.ueberschrift1
+	{
+		color:#AF2932;
+	}
+	
+	.ueberschrift2
+	{
+		font-size:16pt;
+		font-weight:normal;
+	}
+	
+	.ueberschrift3
+	{
+		font-size:14pt;
+		font-weight:normal;
+		color:#5F615E;
+	}
+	
+	.angebot
+	{
+		font-size:16pt;
+	}
+	
+	.unten
+	{
+		padding-top:10px;
+		font-size:9pt;
+	}
+	
+	#bildbereich
+	{
+		position:relative;
+	}
+	
+	a:link,a:visited
+	{
+		color:#5F615E;
+	}
+	
+	a:hover
+	{
+		text-decoration:none;
+	}
+	
+	table#produktliste
+	{
+			width:100%;
+			border-collapse: collapse;
+			border:solid 1px black
+	}
+	#produktliste tr
+	{
+		border:solid 1px grey
+	}
+	#agb
+	{
+		font-size:9pt;
+		border:solid 1px black;
+		background-color:#EAE8E8;
+		border-radius:5px;
+		padding:8px
+	}
+	#aktienkurs
+	{
+		width:150px;
+		margin-left:auto;
+		margin-right:auto;
+		border:1px solid black;
+		background-color:lightgrey;
+		font-size:30px;
+		border-radius:5px;
+		padding:10px;
+		margin-top:20px;
+		margin-bottom:20px
+	}
+		
+	
