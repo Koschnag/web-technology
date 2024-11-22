@@ -1,0 +1,55 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+CREATE TABLE `standorte` (
+  `id` int(11) NOT NULL,
+  `ort` varchar(30) NOT NULL,
+  `strasse` varchar(30) NOT NULL,
+  `kundenbetreuer` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Daten für Tabelle `standorte`
+--
+
+INSERT INTO `standorte` (`id`, `ort`, `strasse`, `kundenbetreuer`) VALUES
+(1, 'Stuttgart', 'Goethestr. 7', 'Herr Meier'),
+(2, 'Starnberg', 'Schillerstr. 3', 'Herr Müller'),
+(3, 'Stralsund', 'Lessingstr. 5', 'Herr Mustermann'),
+(4, 'München', 'Hauptstr. 3', 'Frau Meier'),
+(5, 'Ulm', 'Bahnhofstr. 12', 'Herr Max'),
+(6, 'Hamburg', 'Hafenstr. 3', 'Frau Peters'),
+(7, 'Berlin', 'Poststr. 3', 'Herr Zug'),
+(8, 'Dortmund', 'Hauptstr. 34', 'Frau Tom');
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle `standorte`
+--
+ALTER TABLE `standorte`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT für Tabelle `standorte`
+--
+ALTER TABLE `standorte`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
