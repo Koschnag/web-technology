@@ -25,10 +25,11 @@ function togglePrice() {
     }
 }
 
-function showBack() {
-    document.getElementById('produktbild').src = 'img/notstromaggregat-rueckseite.jpg';
-}
-
-function showFront() {
-    document.getElementById('produktbild').src = 'img/notstromaggregat.jpg';
+function toggleImage() {
+    const produktbild = document.getElementById('produktbild');
+    if (produktbild.src.includes('notstromaggregat.jpg')) {
+        produktbild.src = 'img/notstromaggregat-rueckseite.jpg';
+    } else {
+        produktbild.src = 'img/notstromaggregat.jpg';
+    }
 }
