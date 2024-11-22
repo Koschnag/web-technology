@@ -27,11 +27,58 @@ function togglePrice() {
 
 function toggleImage() {
     const produktbild = document.getElementById('produktbild');
+    const kreis = document.getElementById('kreis');
     if (produktbild.src.includes('notstromaggregat.jpg')) {
         produktbild.src = 'img/notstromaggregat-rueckseite.jpg';
+        kreis.style.display = 'none';
     } else {
         produktbild.src = 'img/notstromaggregat.jpg';
     }
+}
+
+function verschiebeKreis(x, y, lupeId) {
+    const kreis = document.getElementById('kreis');
+    const lupe = document.getElementById(lupeId);
+    if (kreis.style.display === 'none' || kreis.style.left !== `${x}px` || kreis.style.top !== `${y}px`) {
+        kreis.style.left = `${x}px`;
+        kreis.style.top = `${y}px`;
+        kreis.style.display = 'block';
+        lupe.style.opacity = 0.3;
+    } else {
+        kreis.style.display = 'none';
+        lupe.style.opacity = 1;
+    }
+}
+
+function animateFeatures() {
+    const features = [
+        { x: 200, y: 50, text: 'zwei Steckdosen' },
+        { x: 300, y: 150, text: 'Ein-/Ausschalter' },
+        { x: 400, y: 250, text: 'Dieselmotor 5.5e' }
+    ];
+    let index = 0;
+    const interval = setInterval(() => {
+        if (index < features.length) {
+            verschiebeKreis(features[index].x, features[index].y, `lupe${index + 1}`);
+            document.querySelector(`strong:contains(${features[index].text})`).style.color = 'red';
+            index++;
+        } else {
+            clearInterval(interval);
+        }
+    }, 2000);
+}
+
+function showLiveChat() {
+    const liveChat = document.getElementById('live-chat');
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    liveChat.style.left = `${(viewportWidth - liveChat.offsetWidth) / 2}px`;
+    liveChat.style.top = `${(viewportHeight - liveChat.offsetHeight) / 2}px`;
+    liveChat.style.display = 'block';
+}
+
+function closeLiveChat() {
+    document.getElementById('live-chat').style.display = 'none';
 }
 
 function init() {
@@ -42,6 +89,14 @@ function init() {
         toggleImage();
         alert('Klicken Sie erneut auf das Bild, um die Ansicht zu wechseln');
     });
+    document.getElementById('lupe1').addEventListener('click', () => verschiebeKreis(200, 50, 'lupe1'));
+    document.getElementById('lupe2').addEventListener('click', () => verschiebeKreis(300, 150, 'lupe2'));
+    document.getElementById('lupe3').addEventListener('click', () => verschiebeKreis(400, 250, 'lupe3'));
+    document.getElementById('animation-link').addEventListener('click', animateFeatures);
+    document.getElementById('close-chat').addEventListener('click', closeLiveChat);
+    document.getElementById('no-thanks').addEventListener('click', closeLiveChat);
+
+    setTimeout(showLiveChat, 10000);
 }
 
 document.addEventListener('DOMContentLoaded', init);
