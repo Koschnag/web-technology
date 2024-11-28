@@ -18,6 +18,28 @@
             color: grey;
             font-style: italic;
         }
+        #kreis {
+            position: absolute;
+            display: none;
+            top: 45%; /* Adjust based on the actual position */
+            right: 6.67%; /* Adjust based on the actual position */
+            transform: translateY(-50%);
+            opacity: 0.5; /* Make the circle half transparent */
+        }
+        #live-chat-window {
+            background-color: white;
+            border: 1px solid black;
+            padding: 20px;
+            z-index: 1000;
+            position: absolute;
+            display: none;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #live-chat-content {
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -36,9 +58,21 @@
 
     <div id="bildbereich">
         <img id='produktbild' src="img/notstromaggregat.jpg"/>
+        <img id='kreis' src="img/kreis.png"/>
     </div>
 
     <p id="preisbereich"><span id="preis"><em>nur</em> <strong>999</strong> Euro</span> <span id="mwst">inkl. 19% MwSt.</span> <button type="button" id="toggle-price">zeige Nettopreis</button></p>
+
+    <button id="lupe">🔍</button>
+
+    <div id="live-chat-window">
+        <div id="live-chat-content">
+            <span id="close-chat" style="cursor:pointer;">&times;</span>
+            <p>Benötigen Sie Hilfe im Live-Chat?</p>
+            <button id="yes-please">Ja, gerne</button>
+            <button id="no-thanks">Nein, danke</button>
+        </div>
+    </div>
 
     <hr>
 
