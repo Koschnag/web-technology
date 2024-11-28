@@ -6,6 +6,19 @@
     <meta charset="utf8">
     <title>Notstrom Mustermann GmbH</title>
     <link rel="stylesheet" href="css/layout.css"/>
+    <style>
+        .highlight {
+            color: red;
+            font-size: larger;
+        }
+        .green {
+            color: green;
+        }
+        .grey {
+            color: grey;
+            font-style: italic;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,27 +32,21 @@
 
     <hr/>
 
-    <h2 class="angebot">Aktuell zum <a href='#'>Sonderpreis</a>: Notstromanlage X2345+</h2>
+    <h2 class="angebot">Aktuell zum <a href='#' id="sonderpreis-link">Sonderpreis</a>: Notstromanlage X2345+</h2>
 
     <div id="bildbereich">
-
-    <img id='produktbild' src="img/notstromaggregat.jpg"/>
-
+        <img id='produktbild' src="img/notstromaggregat.jpg"/>
     </div>
 
-    <p>
-    mit <strong>zwei Steckdosen</strong><img src="img/lupe.png" alt="Lupe"/> 
-    einem robusten <strong>Ein-/Ausschalter</strong><br/>
-    und einem leistungsstarken 4600 Watt <strong>Dieselmotor 5.5e</strong>
-    </p>
-
-    <p id="preisbereich"><em>nur</em> <strong>999</strong> Euro inkl. 19% MwSt. <button type="button">zeige Nettopreis</button></p>
+    <p id="preisbereich"><span id="preis"><em>nur</em> <strong>999</strong> Euro</span> <span id="mwst">inkl. 19% MwSt.</span> <button type="button" id="toggle-price">zeige Nettopreis</button></p>
 
     <hr>
 
     <p class="unten"><a href="index.html">Startseite</a> - <a href="#">Kontakt</a> - <a href="#">Anfahrt</a> - <a href="#">Impressum</a></p>
 
     </div>
+
+    <script type="module" src="js/angebot.js"></script>
 
 </body>
 
