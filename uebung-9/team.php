@@ -1,25 +1,54 @@
 <?php
-/*****************************************************
+/***********************************************************
  * team.php
- * (1) Stellt die DB-Verbindung her.
- * (2) Enthält Interface, Repository, ViewModel.
- * (3) Ruft die Daten ab und gibt sie im HTML aus.
- *****************************************************/
+ * 
+ * Ein einziges Skript:
+ * 1) DB-Verbindung
+ * 2) Funktion berechneMonate($jahr)
+ * 3) Interface ITeamRepository
+ * 4) TeamRepository (Implementierung)
+ * 5) TeamViewModel
+ * 6) "Composition Root" + HTML-Ausgabe
+ * 
+ * MVVM, DIP, IoC, "Poor Man's DI"
+ ************************************************************/
 
 /* --- 1) DB-VERBINDUNG --- */
-$dbHost = "localhost";
-$dbUser = "root";
-$dbPass = "";
-$dbName = "deine_datenbank"; // Bitte anpassen!
+$dbHost = "localhost";      // <--- Anpassen
+$dbUser = "root";           // <--- Anpassen
+$dbPass = "";               // <--- Anpassen
+$dbName = "deine_datenbank"; // <--- Anpassen
 
 $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 if ($mysqli->connect_error) {
     die("Datenbank-Verbindungsfehler: " . $mysqli->connect_error);
 }
 
-/* --- 2) INTERFACE & KLASSEN (DIP, MVVM) --- */
+/* --- 2) FUNKTION: berechneMonate($jahr) ---
+   Berechnet die seit dem 1. Januar des Eintrittsjahres
+   bis zum aktuellen Monat vergangenen Monate */
+function berechneMonate(int $jahr): int
+{
+    $aktuellesJahr  = (int)date('Y');
+    $aktuellerMonat = (int)date('n'); // Monat 1..12
 
-// Data Access Layer (Model-Interface):
+    // Jahresdifferenz
+    $jahresDiff = $aktuellesJahr - $jahr;
+
+    // Monate = "volle Jahre * 12" + "aktuellerMonat - 1"
+    // (Weil Januar = Monat 1 => 0 Monate Differenz)
+    $monate = ($jahresDiff * 12) + ($aktuellerMonat - 1);
+
+    // Optional: Falls Eintrittsjahr in der Zukunft liegt,
+    // könnte $monate negativ sein. Hier absichern:
+    if ($monate < 0) {
+        $monate = 0;
+    }
+
+    return $monate;
+}
+
+/* --- 3) INTERFACE: ITeamRepository (DIP) --- */
 interface ITeamRepository
 {
     public function getCount(): int;
@@ -29,7 +58,7 @@ interface ITeamRepository
     public function getAllSortedByYearAsc(): array;
 }
 
-// Konkrete Implementierung des Repositories (DB-Zugriff):
+/* --- 4) TeamRepository (Implementierung des Interfaces) --- */
 class TeamRepository implements ITeamRepository
 {
     private mysqli $conn;
@@ -52,7 +81,8 @@ class TeamRepository implements ITeamRepository
 
     public function getAllAlphabetical(): array
     {
-        $sql = "SELECT id, nachname, vorname, eintrittsjahr FROM team
+        $sql = "SELECT id, nachname, vorname, eintrittsjahr
+                FROM team
                 ORDER BY nachname, vorname";
         $result = $this->conn->query($sql);
         if (!$result) {
@@ -63,13 +93,13 @@ class TeamRepository implements ITeamRepository
 
     public function getAllBeforeYear(int $year): array
     {
-        // Beispiel mit Prepared Statement:
-        $stmt = $this->conn->prepare(
-            "SELECT id, nachname, vorname, eintrittsjahr 
-             FROM team 
-             WHERE eintrittsjahr < ?
-             ORDER BY eintrittsjahr ASC"
-        );
+        // Beispiel für Prepared Statements (Sicherheit)
+        $stmt = $this->conn->prepare("
+            SELECT id, nachname, vorname, eintrittsjahr
+            FROM team
+            WHERE eintrittsjahr < ?
+            ORDER BY eintrittsjahr ASC
+        ");
         $stmt->bind_param("i", $year);
         $stmt->execute();
         $res = $stmt->get_result();
@@ -101,30 +131,31 @@ class TeamRepository implements ITeamRepository
     }
 }
 
-// ViewModel („Geschäftslogik“ / Datenaufbereitung für die Ausgabe):
+/* --- 5) ViewModel (MVVM-Logik, nutzt Repository) --- */
 class TeamViewModel
 {
     private ITeamRepository $repo;
 
-    // Konstruktor-Injection (Poor Man’s DI):
+    // Konstruktor-Injection: "Poor Man's DI"
     public function __construct(ITeamRepository $repo)
     {
         $this->repo = $repo;
     }
 
+    // Anzahl Teammitglieder (String)
     public function getCountString(): string
     {
         $count = $this->repo->getCount();
         return "Anzahl Team-Mitglieder: $count";
     }
 
-    // Alphabetisch sortiert
+    // Alphabetisch sortierte Gesamtliste
     public function getAlphabetical(): array
     {
         return $this->repo->getAllAlphabetical();
     }
 
-    // Langjährige: Eintritt vor 2018
+    // Nur Mitglieder, die vor 2018 eingetreten sind
     public function getLongTermMembers(): array
     {
         return $this->repo->getAllBeforeYear(2018);
@@ -143,97 +174,116 @@ class TeamViewModel
     }
 }
 
-/* --- 3) COMPOSITION ROOT (Erzeugung + HTML-Ausgabe) --- */
+/* --- 6) "Composition Root": Objekt-Erzeugung + HTML-Ausgabe --- */
 
-// Repository und ViewModel instanzieren
+// a) Repository und ViewModel instanzieren
 $repo = new TeamRepository($mysqli);
 $vm   = new TeamViewModel($repo);
 
-// HTML-Ausgabe
 ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Team Übersicht</title>
+    <title>Team-Übersicht (MVVM)</title>
 </head>
 <body>
-    <h1>Team-Übersicht</h1>
+    <h1>Support-Team-Liste</h1>
 
-    <!-- (A) Anzahl der Mitarbeiter -->
-    <section>
-        <h2>Anzahl Teammitglieder</h2>
-        <p><?= htmlspecialchars($vm->getCountString()); ?></p>
-    </section>
+    <!-- A) Anzahl der Mitarbeiter -->
+    <h2>Anzahl der Mitarbeiter</h2>
+    <p><?= htmlspecialchars($vm->getCountString()); ?></p>
 
-    <!-- (B) Alphabetisch nach Nachname, Vorname -->
-    <section>
-        <h2>Alphabetische Liste</h2>
-        <ul>
-            <?php foreach ($vm->getAlphabetical() as $person): ?>
-                <li>
-                    <?= htmlspecialchars($person['nachname']) ?>,
-                    <?= htmlspecialchars($person['vorname']) ?>
-                    (<?= (int)$person['eintrittsjahr'] ?>)
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+    <!-- B) Alphabetisch (Nachname, Vorname) -->
+    <h2>Alphabetische Liste</h2>
+    <ul>
+        <?php foreach ($vm->getAlphabetical() as $person): ?>
+            <?php
+                // Eintrittsjahr
+                $jahr = (int)$person['eintrittsjahr'];
+                // Berechne Monate, um Jahre zu erhalten
+                $monate = berechneMonate($jahr);
+                $jahre  = floor($monate / 12);
+            ?>
+            <li>
+                <?= htmlspecialchars($person['nachname']) ?>,
+                <?= htmlspecialchars($person['vorname']) ?> 
+                (<?= $jahr ?>) –
+                (seit <?= $jahre ?> Jahren im Unternehmen)
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
-    <!-- (C) Nur langjährige Teammitglieder (Eintritt < 2018) -->
-    <section>
-        <h2>Langjährige Mitglieder (vor 2018 eingetreten)</h2>
-        <ul>
-            <?php foreach ($vm->getLongTermMembers() as $person): ?>
-                <li>
-                    <?= htmlspecialchars($person['nachname']) ?>,
-                    <?= htmlspecialchars($person['vorname']) ?>
-                    (<?= (int)$person['eintrittsjahr'] ?>)
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+    <!-- C) Nur langjährige Teammitglieder (Eintritt vor 2018) -->
+    <h2>Langjährige Mitglieder (vor 2018)</h2>
+    <ul>
+        <?php foreach ($vm->getLongTermMembers() as $person): ?>
+            <?php
+                $jahr = (int)$person['eintrittsjahr'];
+                $monate = berechneMonate($jahr);
+                $jahre  = floor($monate / 12);
+            ?>
+            <li>
+                <?= htmlspecialchars($person['nachname']) ?>,
+                <?= htmlspecialchars($person['vorname']) ?>
+                (<?= $jahr ?>) –
+                (seit <?= $jahre ?> Jahren im Unternehmen)
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
-    <!-- (D) Nach Eintrittsjahr absteigend -->
-    <section>
-        <h2>Sortiert nach Eintrittsjahr (absteigend)</h2>
-        <ul>
-            <?php foreach ($vm->getByYearDescending() as $person): ?>
-                <li>
-                    <?= htmlspecialchars($person['nachname']) ?>,
-                    <?= htmlspecialchars($person['vorname']) ?>
-                    (<?= (int)$person['eintrittsjahr'] ?>)
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+    <!-- D) Sortiert nach Eintrittsjahr (absteigend) -->
+    <h2>Nach Eintrittsjahr absteigend</h2>
+    <ul>
+        <?php foreach ($vm->getByYearDescending() as $person): ?>
+            <?php
+                $jahr = (int)$person['eintrittsjahr'];
+                $monate = berechneMonate($jahr);
+                $jahre  = floor($monate / 12);
+            ?>
+            <li>
+                <?= htmlspecialchars($person['nachname']) ?>,
+                <?= htmlspecialchars($person['vorname']) ?>
+                (<?= $jahr ?>) –
+                (seit <?= $jahre ?> Jahren im Unternehmen)
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
-    <!-- (E) Nach Eintrittsjahr aufsteigend -->
-    <section>
-        <h2>Sortiert nach Eintrittsjahr (aufsteigend)</h2>
-        <ul>
-            <?php foreach ($vm->getByYearAscending() as $person): ?>
-                <li>
-                    <?= htmlspecialchars($person['nachname']) ?>,
-                    <?= htmlspecialchars($person['vorname']) ?>
-                    (<?= (int)$person['eintrittsjahr'] ?>)
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+    <!-- E) Sortiert nach Eintrittsjahr (aufsteigend) -->
+    <h2>Nach Eintrittsjahr aufsteigend</h2>
+    <ul>
+        <?php foreach ($vm->getByYearAscending() as $person): ?>
+            <?php
+                $jahr = (int)$person['eintrittsjahr'];
+                $monate = berechneMonate($jahr);
+                $jahre  = floor($monate / 12);
+            ?>
+            <li>
+                <?= htmlspecialchars($person['nachname']) ?>,
+                <?= htmlspecialchars($person['vorname']) ?>
+                (<?= $jahr ?>) –
+                (seit <?= $jahre ?> Jahren im Unternehmen)
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
-    <!-- (F) Nur Vor- und Nachnamen -->
-    <section>
-        <h2>Nur Vor- und Nachnamen</h2>
-        <ul>
-            <?php foreach ($vm->getAlphabetical() as $person): ?>
-                <li>
-                    <?= htmlspecialchars($person['vorname']) ?>
-                    <?= htmlspecialchars($person['nachname']) ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </section>
+    <!-- F) Nur Vor- und Nachnamen -->
+    <h2>Nur Vor- und Nachnamen</h2>
+    <ul>
+        <?php foreach ($vm->getAlphabetical() as $person): ?>
+            <?php
+                $jahr = (int)$person['eintrittsjahr'];
+                $monate = berechneMonate($jahr);
+                $jahre  = floor($monate / 12);
+            ?>
+            <li>
+                <?= htmlspecialchars($person['vorname']) ?>
+                <?= htmlspecialchars($person['nachname']) ?>
+                (seit <?= $jahre ?> Jahren im Unternehmen)
+            </li>
+        <?php endforeach; ?>
+    </ul>
 
 </body>
 </html>
