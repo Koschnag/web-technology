@@ -2,22 +2,18 @@
 /***********************************************************
  * team.php
  * 
- * Ein einziges Skript:
- * 1) DB-Verbindung
- * 2) Funktion berechneMonate($jahr)
- * 3) Interface ITeamRepository
- * 4) TeamRepository (Implementierung)
- * 5) TeamViewModel
- * 6) "Composition Root" + HTML-Ausgabe
- * 
+ * EIN SKRIPT MIT ZWEI REPOSITORYS:
+ * 1) TeamRepository (echte DB)
+ * 2) TeamMockRepository (5 Dummy-Einträge)
+ *
  * MVVM, DIP, IoC, "Poor Man's DI"
  ************************************************************/
 
-/* --- 1) DB-VERBINDUNG --- */
-$dbHost = "localhost";      // <--- Anpassen
-$dbUser = "root";           // <--- Anpassen
-$dbPass = "";               // <--- Anpassen
-$dbName = "deine_datenbank"; // <--- Anpassen
+/* --- 1) OPTIONALE DB-VERBINDUNG --- */
+$dbHost = "localhost";       // Anpassen (falls DB genutzt wird)
+$dbUser = "root";            // Anpassen
+$dbPass = "";                // Anpassen
+$dbName = "deine_datenbank"; // Anpassen
 
 $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 if ($mysqli->connect_error) {
@@ -25,26 +21,20 @@ if ($mysqli->connect_error) {
 }
 
 /* --- 2) FUNKTION: berechneMonate($jahr) ---
-   Berechnet die seit dem 1. Januar des Eintrittsjahres
-   bis zum aktuellen Monat vergangenen Monate */
+   Berechnet die Monate seit dem 1. Januar des Eintrittsjahres
+   bis zum aktuellen Monat, um daraus Jahre abzuleiten. */
 function berechneMonate(int $jahr): int
 {
     $aktuellesJahr  = (int)date('Y');
-    $aktuellerMonat = (int)date('n'); // Monat 1..12
+    $aktuellerMonat = (int)date('n'); // Monat (1..12)
 
-    // Jahresdifferenz
     $jahresDiff = $aktuellesJahr - $jahr;
-
-    // Monate = "volle Jahre * 12" + "aktuellerMonat - 1"
-    // (Weil Januar = Monat 1 => 0 Monate Differenz)
     $monate = ($jahresDiff * 12) + ($aktuellerMonat - 1);
 
-    // Optional: Falls Eintrittsjahr in der Zukunft liegt,
-    // könnte $monate negativ sein. Hier absichern:
+    // Falls Eintrittsjahr in der Zukunft, setze auf 0
     if ($monate < 0) {
         $monate = 0;
     }
-
     return $monate;
 }
 
@@ -58,7 +48,13 @@ interface ITeamRepository
     public function getAllSortedByYearAsc(): array;
 }
 
-/* --- 4) TeamRepository (Implementierung des Interfaces) --- */
+/* ***********************************************************************
+ * 4) KONKRETE IMPLEMENTIERUNGEN DIESES INTERFACES
+ *    -> a) TeamRepository (echte DB)
+ *    -> b) TeamMockRepository (dummy-Daten)
+ *********************************************************************** */
+
+/* --- 4a) TeamRepository (ECHTE DATENBANK) --- */
 class TeamRepository implements ITeamRepository
 {
     private mysqli $conn;
@@ -93,7 +89,6 @@ class TeamRepository implements ITeamRepository
 
     public function getAllBeforeYear(int $year): array
     {
-        // Beispiel für Prepared Statements (Sicherheit)
         $stmt = $this->conn->prepare("
             SELECT id, nachname, vorname, eintrittsjahr
             FROM team
@@ -131,54 +126,121 @@ class TeamRepository implements ITeamRepository
     }
 }
 
-/* --- 5) ViewModel (MVVM-Logik, nutzt Repository) --- */
+/* --- 4b) TeamMockRepository (DUMMY / MOCK) --- */
+class TeamMockRepository implements ITeamRepository
+{
+    // Wir definieren 5 fiktive Datensätze
+    private array $mockData = [
+        // (id, nachname, vorname, eintrittsjahr)
+        [ 'id'=>1, 'nachname'=>'Mueller',  'vorname'=>'Anna',   'eintrittsjahr'=>2010 ],
+        [ 'id'=>2, 'nachname'=>'Schmidt',  'vorname'=>'Markus', 'eintrittsjahr'=>2021 ],
+        [ 'id'=>3, 'nachname'=>'Weber',    'vorname'=>'Petra',  'eintrittsjahr'=>2015 ],
+        [ 'id'=>4, 'nachname'=>'Mayer',    'vorname'=>'Martin', 'eintrittsjahr'=>2008 ],
+        [ 'id'=>5, 'nachname'=>'Paulus',   'vorname'=>'Paul',   'eintrittsjahr'=>2000 ],
+    ];
+
+    public function getCount(): int
+    {
+        return count($this->mockData);
+    }
+
+    // Alphabetisch sortieren (Nachname, Vorname)
+    public function getAllAlphabetical(): array
+    {
+        $data = $this->mockData;
+        usort($data, function($a, $b){
+            $cmp1 = strcmp($a['nachname'], $b['nachname']);
+            if ($cmp1 !== 0) return $cmp1;
+            return strcmp($a['vorname'], $b['vorname']);
+        });
+        return $data;
+    }
+
+    // Alle, die vor $year eingetreten sind
+    public function getAllBeforeYear(int $year): array
+    {
+        $data = array_filter($this->mockData, function($row) use ($year) {
+            return $row['eintrittsjahr'] < $year;
+        });
+        // Sortierung optional: nach eintrittsjahr ASC
+        usort($data, function($a, $b){
+            return $a['eintrittsjahr'] <=> $b['eintrittsjahr'];
+        });
+        return $data;
+    }
+
+    // Nach Eintrittsjahr DESC
+    public function getAllSortedByYearDesc(): array
+    {
+        $data = $this->mockData;
+        usort($data, function($a, $b){
+            return $b['eintrittsjahr'] <=> $a['eintrittsjahr'];
+        });
+        return $data;
+    }
+
+    // Nach Eintrittsjahr ASC
+    public function getAllSortedByYearAsc(): array
+    {
+        $data = $this->mockData;
+        usort($data, function($a, $b){
+            return $a['eintrittsjahr'] <=> $b['eintrittsjahr'];
+        });
+        return $data;
+    }
+}
+
+/* --- 5) ViewModel --- */
 class TeamViewModel
 {
     private ITeamRepository $repo;
 
-    // Konstruktor-Injection: "Poor Man's DI"
     public function __construct(ITeamRepository $repo)
     {
         $this->repo = $repo;
     }
 
-    // Anzahl Teammitglieder (String)
     public function getCountString(): string
     {
-        $count = $this->repo->getCount();
-        return "Anzahl Team-Mitglieder: $count";
+        $cnt = $this->repo->getCount();
+        return "Anzahl Team-Mitglieder: $cnt";
     }
 
-    // Alphabetisch sortierte Gesamtliste
     public function getAlphabetical(): array
     {
         return $this->repo->getAllAlphabetical();
     }
 
-    // Nur Mitglieder, die vor 2018 eingetreten sind
     public function getLongTermMembers(): array
     {
         return $this->repo->getAllBeforeYear(2018);
     }
 
-    // Nach Eintrittsjahr absteigend
     public function getByYearDescending(): array
     {
         return $this->repo->getAllSortedByYearDesc();
     }
 
-    // Nach Eintrittsjahr aufsteigend
     public function getByYearAscending(): array
     {
         return $this->repo->getAllSortedByYearAsc();
     }
 }
 
-/* --- 6) "Composition Root": Objekt-Erzeugung + HTML-Ausgabe --- */
+/* --- 6) Composition Root: Wähle DB oder Mock, erstelle VM, HTML-Ausgabe --- */
 
-// a) Repository und ViewModel instanzieren
-$repo = new TeamRepository($mysqli);
-$vm   = new TeamViewModel($repo);
+// a) Schalter: TRUE => MOCK-Daten, FALSE => echte DB
+$useMock = false; // <--- HIER ändern: true = 5 Dummys, false = DB
+
+// b) Repository erstellen
+if ($useMock) {
+    $repo = new TeamMockRepository();
+} else {
+    $repo = new TeamRepository($mysqli);
+}
+
+// c) ViewModel
+$vm = new TeamViewModel($repo);
 
 ?>
 <!DOCTYPE html>
@@ -190,6 +252,16 @@ $vm   = new TeamViewModel($repo);
 <body>
     <h1>Support-Team-Liste</h1>
 
+    <!-- Info: nutzen wir Mock oder DB? -->
+    <p>
+        <strong>Modus:</strong> 
+        <?php if ($useMock): ?>
+            MOCK (5 Dummy-Einträge)
+        <?php else: ?>
+            Echte DB-Verbindung
+        <?php endif; ?>
+    </p>
+
     <!-- A) Anzahl der Mitarbeiter -->
     <h2>Anzahl der Mitarbeiter</h2>
     <p><?= htmlspecialchars($vm->getCountString()); ?></p>
@@ -199,9 +271,7 @@ $vm   = new TeamViewModel($repo);
     <ul>
         <?php foreach ($vm->getAlphabetical() as $person): ?>
             <?php
-                // Eintrittsjahr
-                $jahr = (int)$person['eintrittsjahr'];
-                // Berechne Monate, um Jahre zu erhalten
+                $jahr   = (int)$person['eintrittsjahr'];
                 $monate = berechneMonate($jahr);
                 $jahre  = floor($monate / 12);
             ?>
@@ -214,12 +284,12 @@ $vm   = new TeamViewModel($repo);
         <?php endforeach; ?>
     </ul>
 
-    <!-- C) Nur langjährige Teammitglieder (Eintritt vor 2018) -->
+    <!-- C) Nur langjährige (Eintritt vor 2018) -->
     <h2>Langjährige Mitglieder (vor 2018)</h2>
     <ul>
         <?php foreach ($vm->getLongTermMembers() as $person): ?>
             <?php
-                $jahr = (int)$person['eintrittsjahr'];
+                $jahr   = (int)$person['eintrittsjahr'];
                 $monate = berechneMonate($jahr);
                 $jahre  = floor($monate / 12);
             ?>
@@ -232,12 +302,12 @@ $vm   = new TeamViewModel($repo);
         <?php endforeach; ?>
     </ul>
 
-    <!-- D) Sortiert nach Eintrittsjahr (absteigend) -->
-    <h2>Nach Eintrittsjahr absteigend</h2>
+    <!-- D) Nach Eintrittsjahr absteigend -->
+    <h2>Nach Eintrittsjahr (absteigend)</h2>
     <ul>
         <?php foreach ($vm->getByYearDescending() as $person): ?>
             <?php
-                $jahr = (int)$person['eintrittsjahr'];
+                $jahr   = (int)$person['eintrittsjahr'];
                 $monate = berechneMonate($jahr);
                 $jahre  = floor($monate / 12);
             ?>
@@ -250,12 +320,12 @@ $vm   = new TeamViewModel($repo);
         <?php endforeach; ?>
     </ul>
 
-    <!-- E) Sortiert nach Eintrittsjahr (aufsteigend) -->
-    <h2>Nach Eintrittsjahr aufsteigend</h2>
+    <!-- E) Nach Eintrittsjahr aufsteigend -->
+    <h2>Nach Eintrittsjahr (aufsteigend)</h2>
     <ul>
         <?php foreach ($vm->getByYearAscending() as $person): ?>
             <?php
-                $jahr = (int)$person['eintrittsjahr'];
+                $jahr   = (int)$person['eintrittsjahr'];
                 $monate = berechneMonate($jahr);
                 $jahre  = floor($monate / 12);
             ?>
@@ -273,7 +343,7 @@ $vm   = new TeamViewModel($repo);
     <ul>
         <?php foreach ($vm->getAlphabetical() as $person): ?>
             <?php
-                $jahr = (int)$person['eintrittsjahr'];
+                $jahr   = (int)$person['eintrittsjahr'];
                 $monate = berechneMonate($jahr);
                 $jahre  = floor($monate / 12);
             ?>
